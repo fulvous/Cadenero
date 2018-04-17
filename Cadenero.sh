@@ -33,3 +33,18 @@
 #You should have received a copy of the GNU General Public License
 #along with Cadenero.sh  If not, see 
 #<http://www.gnu.org/licenses/>.
+
+IPT="/sbin/iptables"
+
+$IPT -P INPUT ACCEPT
+$IPT -P OUTPUT ACCEPT
+$IPT -F
+
+#Permitir el loopback
+$IPT -I INPUT 1 -i lo -j ACCEPT
+
+#Permitiendo el trafico regresar
+$IPT -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+#Permitir acceso al puerto 2222
+$IPT -A INPUT -p tcp --dport 2222 -j ACCEPT
