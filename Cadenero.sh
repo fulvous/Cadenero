@@ -35,6 +35,7 @@
 #<http://www.gnu.org/licenses/>.
 
 IPT="/sbin/iptables"
+LAN="192.168.1.0/24"
 
 $IPT -P INPUT ACCEPT
 $IPT -P OUTPUT ACCEPT
@@ -48,3 +49,35 @@ $IPT -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 #Permitir acceso al puerto 2222
 $IPT -A INPUT -p tcp --dport 2222 -j ACCEPT
+
+#Permite RTP
+$IPT -A INPUT -p udp -m udp --dport 10000:20000 -j ACCEPT
+
+#Permite adicionales
+$IPT -A INPUT -p udp -m udp --dport 2727 -j ACCEPT
+$IPT -A INPUT -p udp -m udp --dport 4569 -j ACCEPT
+
+#Permite Trafico local
+$IPT -A INPUT -s $LAN -p udp -m udp --dport 5060:5061 -j ACCEPT
+$IPT -A INPUT -s $LAN -p tcp -m tcp --dport 5060:5061 -j ACCEPT
+$IPT -A INPUT -s $LAN -p icmp -j ACCEPT
+$IPT -A INPUT -s $LAN -p tcp -m tcp --dport 137 -j ACCEPT
+$IPT -A INPUT -s $LAN -p tcp -m tcp --dport 138 -j ACCEPT
+$IPT -A INPUT -s $LAN -p tcp -m tcp --dport 139 -j ACCEPT
+$IPT -A INPUT -s $LAN -p tcp -m tcp --dport 445 -j ACCEPT
+$IPT -A INPUT -s $LAN -p tcp -m tcp --dport 10000 -j ACCEPT
+$IPT -A INPUT -s $LAN -p tcp -m tcp --dport 22 -j ACCEPT
+$IPT -A INPUT -s $LAN -p tcp -m tcp --dport 123 -j ACCEPT
+$IPT -A INPUT -s $LAN -p udp -m udp --dport 123 -j ACCEPT
+$IPT -A INPUT -s $LAN -p tcp -m tcp --dport 5038 -j ACCEPT
+$IPT -A INPUT -s $LAN -p tcp -m tcp --dport 58080 -j ACCEPT
+$IPT -A INPUT -s $LAN -p tcp -m tcp --dport 55050 -j ACCEPT
+$IPT -A INPUT -s $LAN -p tcp -m tcp --dport 514 -j ACCEPT
+$IPT -A INPUT -s $LAN -p udp -m udp --dport 514 -j ACCEPT
+
+#Permite entrar al administrador
+$IPT -A INPUT -p tcp --dport 80 -j ACCEPT
+$IPT -A INPUT -p tcp --dport 443 -j ACCEPT
+
+#Cierra el resto del trafico
+$IPT -A INPUT -j DROP
